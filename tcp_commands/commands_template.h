@@ -18,6 +18,7 @@ namespace cmd {
         vel_a,
         vel_s,
         vel_d,
+        flip,
     };
 }
 

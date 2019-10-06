@@ -43,3 +43,6 @@ compile_commands.json
 CTestTestfile.cmake
 make-build-debug
 cmake-build-debug
+
+# IDE
+.idea

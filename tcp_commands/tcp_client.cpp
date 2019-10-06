@@ -43,6 +43,9 @@ int main(int argc, char ** argv) {
             case 'S':
                 assert ((tcp_cmd << std::to_string(cmd::step_ctrl)) != -1);
                 break;
+            case 'f':
+                assert ((tcp_cmd << std::to_string(cmd::flip)) != -1);
+                break;
             default:
                 std::cout << "incorrect input" << std::endl;
                 continue;
