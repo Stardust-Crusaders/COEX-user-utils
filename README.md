@@ -1,1 +1,2 @@
-# COEX-user-utils
+# User utility
+user interface and TCP/UDP routine
