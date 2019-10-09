@@ -2,12 +2,11 @@
 // Created by kira on 05.10.2019.
 //
 //
-// client.cpp
-// ~~~~~~~~~~
+// tcp client for debugging
 //
 
-#include <cstdlib>
 #include "tcp_client.h"
+
 
 int main(int argc, char ** argv) {
     if (argc != 3) {
@@ -54,11 +53,12 @@ int main(int argc, char ** argv) {
     return 0;
 }
 
-tcp_client::tcp_client(const std::string& host, unsigned port) : addr(), sock(), size_(128) {
+
+tcp_client::tcp_client(const std::string& host, unsigned port)
+: addr(), sock(socket(AF_INET, SOCK_STREAM, 0)), size_(128) {
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(host.c_str());
-    sock = socket(AF_INET, SOCK_STREAM, 0);
     assert(sock != -1);
     assert(connect(sock, (struct sockaddr *) &addr, sizeof(addr)) == 0);
 }

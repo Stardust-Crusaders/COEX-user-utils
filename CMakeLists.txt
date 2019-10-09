@@ -10,3 +10,8 @@ add_executable(tcp_commands tcp_commands/tcp_client.cpp
 add_executable(tcp_server tcp_commands/tcp_server.cpp
         tcp_commands/tcp_server.h
         )
+
+add_executable(udp_telemetry udp/udp_telemetry.cpp
+        udp/udp_telemetry.h
+        udp/telemetry_template.h
+        )
