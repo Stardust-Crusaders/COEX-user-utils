@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using UnityEngine;
 using System.Net;
 
+/* 
 namespace cmd {
     enum commands {
         stop = 0,
@@ -21,16 +22,14 @@ namespace cmd {
         flip = 11,
     };
 }
+*/
 
-namespace HD
-{
-  public static class Globals
-  {
-    public const int port = 7331;
-    public const int portudp = 7332;
-        public const string IP = "192.168.0.201";
-    public static bool isServer;
+
+namespace HD{
+  public static class Globals{
+    public const int Port = 7331;
+    public const int PortUdp = 7332;
+    //public const string IP = "192.168.0.200";
+    public const string IP = "127.0.0.1";
   }
-
-  
 }

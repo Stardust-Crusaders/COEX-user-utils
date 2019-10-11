@@ -12,96 +12,52 @@ namespace HD
     #region Data
 
     public float x,y,z,yaw,pitch,roll;
-
-    //public GameObject copter;
-    /// <summary>
-    /// For Clients, the connection to the server.
-    /// For Servers, the connection to a client.
-    /// </summary>
-    readonly UdpClient connection;
+    
+    private readonly UdpClient _connection;
     #endregion
 
     #region Init
-    public UdpConnectedClient(IPAddress ip = null)
-    {
-
-      //copter = GameObject.FindGameObjectWithTag("Player");
-      if(UDPChat.instance.isServer)
-      {
-        connection = new UdpClient(Globals.portudp);
-      }
-      else
-      {
-        connection = new UdpClient(); // Auto-bind port
-      }
-      connection.BeginReceive(OnReceive, null);
+    public UdpConnectedClient(IPAddress ip = null) {
+        
+      _connection = new UdpClient(Globals.PortUdp);
+      
+      _connection.BeginReceive(OnReceive, null);
     }
 
-    public void Close()
-    {
-      connection.Close();
+    public void Close() {
+      _connection.Close();
     }
     #endregion
 
-    
-    public void Update()
-    {
-        
-    }
-
-
     #region API
-    void OnReceive(IAsyncResult ar)
-    {
-      try
-      {
+    void OnReceive(IAsyncResult ar) {
+      try {
         IPEndPoint ipEndpoint = null;
-        byte[] data = connection.EndReceive(ar, ref ipEndpoint);
-        try
-        {
-        z = -BitConverter.ToSingle(data,0);
-        x = BitConverter.ToSingle(data,4);
-        y = BitConverter.ToSingle(data,8);
-        pitch = BitConverter.ToSingle(data,12);
-        yaw = BitConverter.ToSingle(data,16);
-        roll = BitConverter.ToSingle(data,20); //TODO(me): NaN check
-        }
-        catch(SocketException e)
-        {
-
+        byte[] data = _connection.EndReceive(ar, ref ipEndpoint);
+        
+        try { 
+          z = -BitConverter.ToSingle(data,0);
+          x = BitConverter.ToSingle(data,4);
+          y = BitConverter.ToSingle(data,8);
+          pitch = BitConverter.ToSingle(data,12);
+          yaw = BitConverter.ToSingle(data,16);
+          roll = BitConverter.ToSingle(data,20); //TODO(me): NaN check
         }
         
-      /* 
-        //Debug.Log(data);
-        //UDPChat.AddClient(ipEndpoint)
-
-
-        Debug.Log("x:" + x + "y:" + y + "z:" + z);
-
-        //UDPChat.messageToDisplay += message + Environment.NewLine;
-
-        if(UDPChat.instance.isServer)
-        {
-          //UDPChat.BroadcastChatMessage(message);
+        catch(SocketException e) {
+          Debug.Log("Error NaN");
         }
-      */
-      }
-      catch(SocketException e)
-      {
-        // This happens when a client disconnects, as we fail to send to that port.
+        
       }
       
-      connection.BeginReceive(OnReceive, null);
+      catch(SocketException e) {
+        Debug.Log("Error Receive");
+      }
+      
+      _connection.BeginReceive(OnReceive, null);
       
     }
 
-    
-
-    internal void Send(string message, IPEndPoint ipEndpoint)
-    {
-      byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-      connection.Send(data, data.Length, ipEndpoint);
-    }
     #endregion
   }
 }

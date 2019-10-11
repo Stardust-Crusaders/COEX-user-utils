@@ -14,73 +14,64 @@ namespace HD
     /// For Clients, the connection to the server.
     /// For Servers, the connection to a client.
     /// </summary>
-    readonly TcpClient connection;
+    readonly TcpClient _connection;
 
-    readonly byte[] readBuffer = new byte[5000];
+    readonly byte[] _readBuffer = new byte[5000];
 
-    NetworkStream stream
-    {
-      get
-      {
-        return connection.GetStream();
+    NetworkStream Stream {
+      get {
+        return _connection.GetStream();
       }
     }
     #endregion
 
     #region Init
-    public TcpConnectedClient(TcpClient tcpClient)
-    {
-      this.connection = tcpClient;
-      this.connection.NoDelay = true; // Disable Nagle's cache algorithm
-      if(TCPChat.instance.isServer)
-      { // Client is awaiting EndConnect
-        stream.BeginRead(readBuffer, 0, readBuffer.Length, OnRead, null);
-      }
+    public TcpConnectedClient(TcpClient tcpClient) {
+      this._connection = tcpClient;
+      this._connection.NoDelay = true; // Disable Nagle's cache algorithm
     }
 
-    internal void Close()
-    {
-      connection.Close();
+    internal void Close() {
+      _connection.Close();
     }
     #endregion
 
     #region Async Events
+    
+    
     void OnRead(IAsyncResult ar)
     {
-      int length = stream.EndRead(ar);
+      int length = Stream.EndRead(ar);
+      Debug.Log(length);
+      Debug.Log("passed");
       if(length <= 0)
-      { // Connection closed
-        TCPChat.instance.OnDisconnect(this);
+      { 
+        // Connection closed
+        Debug.Log("Connection end");
+        _connection.Close();
         return;
       }
-
-      string newMessage = System.Text.Encoding.UTF8.GetString(readBuffer, 0, length);
-      TCPChat.messageToDisplay += newMessage + Environment.NewLine;
-
-      if(TCPChat.instance.isServer)
-      {
-        TCPChat.BroadcastChatMessage(newMessage);
-      }
       
-      stream.BeginRead(readBuffer, 0, readBuffer.Length, OnRead, null);
+      Stream.BeginRead(_readBuffer, 0, _readBuffer.Length, OnRead, null);
     }
-
+    
     internal void EndConnect(IAsyncResult ar)
     {
-      connection.EndConnect(ar);
-
-      stream.BeginRead(readBuffer, 0, readBuffer.Length, OnRead, null);
+      _connection.EndConnect(ar);
+      
+      Debug.Log("try connect");
+      Stream.BeginRead(_readBuffer, 0, _readBuffer.Length, OnRead, null);
     }
     #endregion
+    
 
     #region API
-    internal void Send(string message)
-    {
-      //byte= System.Text.Encoding.ASCII.GetBytes(message);
+    internal void Send(string message) {
+
       char[] buf = message.ToCharArray();
       byte[] buffer = System.Text.Encoding.ASCII.GetBytes(buf);
-      //Debug.Log("1" + buffer.Length);
-      stream.Write(buffer, 0, buffer.Length);
+      Stream.Write(buffer, 0, buffer.Length);
+
     }
     #endregion
   }
