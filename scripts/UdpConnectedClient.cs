@@ -45,13 +45,13 @@ namespace HD
         }
         
         catch(SocketException e) {
-          Debug.Log("Error NaN");
+          Debug.Log("Error NaN" + e);
         }
         
       }
       
       catch(SocketException e) {
-        Debug.Log("Error Receive");
+        Debug.Log("Error Receive" + e);
       }
       
       _connection.BeginReceive(OnReceive, null);

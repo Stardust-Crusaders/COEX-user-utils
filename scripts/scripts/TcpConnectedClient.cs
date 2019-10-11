@@ -10,14 +10,8 @@ namespace HD
   public class TcpConnectedClient
   {
     #region Data
-    /// <summary>
-    /// For Clients, the connection to the server.
-    /// For Servers, the connection to a client.
-    /// </summary>
     readonly TcpClient _connection;
-
-    readonly byte[] _readBuffer = new byte[5000];
-
+    
     NetworkStream Stream {
       get {
         return _connection.GetStream();
@@ -28,7 +22,7 @@ namespace HD
     #region Init
     public TcpConnectedClient(TcpClient tcpClient) {
       this._connection = tcpClient;
-      this._connection.NoDelay = true; // Disable Nagle's cache algorithm
+      this._connection.NoDelay = true; 
     }
 
     internal void Close() {
@@ -37,42 +31,34 @@ namespace HD
     #endregion
 
     #region Async Events
-    
-    
-    void OnRead(IAsyncResult ar)
-    {
-      int length = Stream.EndRead(ar);
-      Debug.Log(length);
-      Debug.Log("Successful Send");
-      if(length <= 0)
-      { 
-        // Connection closed
-        Debug.Log("Server Closed");
-        _connection.Close();
-        return;
-      }
-      
-      Stream.BeginRead(_readBuffer, 0, _readBuffer.Length, OnRead, null);
-    }
-    
+
     internal void EndConnect(IAsyncResult ar)
     {
       _connection.EndConnect(ar);
-      
       Debug.Log("Client Connected");
-      Stream.BeginRead(_readBuffer, 0, _readBuffer.Length, OnRead, null);
     }
+    
     #endregion
     
-
     #region API
-    internal void Send(string message) {
 
+    internal void Send(string message) {
       char[] buf = message.ToCharArray();
       byte[] buffer = System.Text.Encoding.ASCII.GetBytes(buf);
       Stream.Write(buffer, 0, buffer.Length);
-
     }
+    
+    
+    internal void SendChar(char[] arr,int size)
+    {
+      byte[] buffer = new byte[size];
+      for (int i = 0; i < size; i++)
+      {
+        buffer[i] = (byte)arr[i];
+      }
+      Stream.Write(buffer, 0, buffer.Length);
+    }
+
     #endregion
   }
 }
